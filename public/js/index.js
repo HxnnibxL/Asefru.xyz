@@ -20,18 +20,27 @@ const phraseText = document.getElementById("phrase");
 const phraseAuthor = document.getElementById("auteur");
 
 let phrases = [];
+let remainingPhrases = []; // Liste temporaire pour éviter les répétitions
 
 // Charger les données au chargement de la page
 document.addEventListener("DOMContentLoaded", async () => {
   phrases = await fetchData();
   phrases = phrases.filter(phrase => phrase.Phrase && phrase.Auteur); // Élimine les entrées invalides
-
+  remainingPhrases = [...phrases]; // Initialiser remainingPhrases
 });
+
+function getRandomPhrase() {
+  if (remainingPhrases.length === 0) {
+    remainingPhrases = [...phrases]; // Réinitialiser si toutes les phrases ont été utilisées
+  }
+  
+  const index = Math.floor(Math.random() * remainingPhrases.length);
+  return remainingPhrases.splice(index, 1)[0]; // Retirer et retourner une phrase
+}
 
 document.addEventListener("keydown", function (event) {
   if (event.code === "Space" && phrases.length > 0) {
-    const index = Math.floor(Math.random() * phrases.length);
-    const phrase = phrases[index];
+    const phrase = getRandomPhrase();
     phraseText.textContent = phrase.Phrase; // Colonne A
     phraseAuthor.textContent = phrase.Auteur; // Colonne B
 
@@ -43,8 +52,7 @@ document.addEventListener("keydown", function (event) {
 // Gestionnaire d'événements pour les interactions mobiles
 document.addEventListener("touchstart", function (event) {
   if (phrases.length > 0) {
-    const index = Math.floor(Math.random() * phrases.length);
-    const phrase = phrases[index];
+    const phrase = getRandomPhrase();
     phraseText.textContent = phrase.Phrase;
     phraseAuthor.textContent = phrase.Auteur;
 
@@ -81,7 +89,6 @@ phraseText.addEventListener("mouseover", function () {
   }
 });
 
-
 // Masquer la bulle lorsque la souris quitte la citation
 phraseText.addEventListener("mouseout", function () {
   const translationElement = document.getElementById("translation");
@@ -91,10 +98,6 @@ phraseText.addEventListener("mouseout", function () {
     translationElement.style.visibility = "hidden"; // Rendre invisible après la transition
   }
 });
-
-
-
-
 
 // Intro disappearing 
 function handleInteraction() {
