@@ -1,0 +1,5 @@
+{
+    "devCommand": "npm run start",
+    "outputDirectory": "public",
+    "buildCommand": null
+}
